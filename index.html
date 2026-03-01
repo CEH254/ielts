@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS - British Council Portal</title>
+    <style>
+        :root {
+            --bc-purple: #260e4d;
+            --bc-cyan: #00adee;
+            --bc-red: #e00000;
+            --bc-gray-bg: #f4f7f9;
+            --bc-dark-gray: #333;
+            --bc-border: #ddd;
+            --btn-blue: #2d5a82;
+            --tab-inactive: #e1e8ed;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            color: var(--bc-dark-gray);
+            line-height: 1.5;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 5%; width: 100%; height: 100%; }
+        .top-bar { background-color: var(--bc-red); height: 42px; width: 100%; }
+        .top-bar .container { display: flex; justify-content: flex-end; }
+        .utility-links { background-color: #fff; display: flex; height: 100%; }
+        .utility-links a, .utility-links button {
+            color: var(--bc-dark-gray); font-size: 13px; text-decoration: none;
+            padding: 0 20px; display: flex; align-items: center; gap: 8px;
+            border: none; border-left: 1px solid var(--bc-border); background: #fff; cursor: pointer;
+        }
+        .utility-links > :last-child { border-right: 1px solid var(--bc-border); }
+        .utility-links a:hover, .utility-links button:hover { text-decoration: underline; }
+        
+        .main-header { background-color: var(--bc-purple); height: 95px; width: 100%; display: flex; align-items: center; }
+        .main-header .container { display: flex; align-items: center; }
+        .logo-area { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .bc-text { color: #fff; font-size: 14px; font-weight: bold; line-height: 1.15; letter-spacing: 0.5px; }
+        .header-divider { width: 1px; height: 38px; background-color: #fff; margin: 0 20px; }
+        .ielts-area { display: flex; align-items: flex-start; }
+        .ielts-text { color: #fff; font-size: 34px; font-weight: 900; font-family: 'Arial Black', Impact, sans-serif; letter-spacing: 1px; line-height: 1; }
+        .reg-mark { color: #fff; font-size: 11px; margin-top: 2px; margin-left: 2px; }
+        .country-text { color: var(--bc-cyan); font-size: 22px; margin-left: 20px; font-weight: normal; }
+        
+        .nav-bar { background: #fff; border-bottom: 2px solid var(--bc-border); width: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .nav-inner { display: flex; overflow-x: auto; scrollbar-width: none; }
+        .nav-inner::-webkit-scrollbar { display: none; }
+        .nav-inner a {
+            color: var(--bc-dark-gray); text-decoration: none; font-size: 14px;
+            padding: 16px 20px; white-space: nowrap; border-right: 1px solid var(--bc-border);
+            display: flex; align-items: center; transition: background 0.2s; cursor: pointer;
+        }
+        .nav-inner a:first-child { border-left: 1px solid var(--bc-border); }
+        .nav-inner a:hover:not(.active) { background-color: var(--bc-gray-bg); }
+        .nav-inner a.active { background-color: var(--bc-cyan); color: #fff; font-weight: bold; }
+
+        @media (max-width: 768px) {
+            .main-header { height: auto; padding: 15px 0; }
+            .main-header .container { flex-wrap: wrap; justify-content: center; text-align: center; gap: 10px; }
+            .header-divider { display: none; }
+            .country-text { margin-left: 0; width: 100%; text-align: center; }
+            .utility-links a { padding: 0 10px; font-size: 11px; }
+        }
+
+        .main-container { min-height: 70vh; padding: 20px 5%; max-width: 1000px; margin: 0 auto; }
+
+        .btn { padding: 12px 25px; border-radius: 25px; border: none; cursor: pointer; font-weight: bold; font-size: 14px; transition: opacity 0.2s; }
+        .btn-blue { background: var(--btn-blue); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--btn-blue); color: var(--btn-blue); }
+        .btn-red { background: var(--bc-red); color: white; }
+        .btn-small { padding: 8px 16px; font-size: 12px; border-radius: 20px; }
+        .btn:hover { opacity: 0.85; }
+
+        .portal-tabs { display: flex; margin-top: 20px; border-bottom: 1px solid var(--bc-border); background: var(--tab-inactive); }
+        .tab { flex: 1; padding: 15px 10px; text-align: center; cursor: pointer; font-size: 13px; border-right: 1px solid #ccc; transition: background 0.2s; }
+        .tab:last-child { border-right: none; }
+        .tab.active { background: #fff; border-top: 3px solid var(--bc-cyan); font-weight: bold; margin-bottom: -1px; }
+
+        .page { display: none; animation: fadeIn 0.3s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .hero { text-align: center; padding: 60px 20px; background: linear-gradient(to bottom, #f9f9f9, #fff); }
+        .hero h1 { font-size: 42px; color: var(--bc-purple); margin-bottom: 10px; }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 40px; }
+        .card { padding: 30px; border: 1px solid #eee; border-radius: 8px; text-align: left; }
+
+        .login-card { max-width: 450px; margin: 40px auto; border: 1px solid var(--bc-border); padding: 40px; border-radius: 4px; position: relative; }
+        .login-card h2 { font-weight: normal; font-size: 28px; margin-top: 0; }
+        .lock-icon { position: absolute; top: 20px; right: 20px; font-size: 20px; }
+        .form-group { margin-bottom: 20px; position: relative; }
+        .form-group label { display: block; font-weight: bold; font-size: 14px; margin-bottom: 5px; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 2px; font-size: 14px; font-family: inherit; }
+        .forgot-link { font-size: 12px; color: var(--btn-blue); text-decoration: none; position: absolute; right: 0; top: 0; }
+
+        .status-header { background: #fff3cd; padding: 10px 15px; border: 1px solid #ffeeba; margin-bottom: 20px; font-size: 14px; }
+        .results-table { width: 100%; border: 1px solid var(--bc-border); border-top: none; padding: 0; }
+        .row { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #eee; }
+        .row-label { display: flex; align-items: center; gap: 10px; font-size: 15px; }
+        .row-score { font-weight: bold; font-size: 18px; }
+        .row-overall { background: #fafafa; font-weight: bold; border-top: 2px solid #ddd; }
+        
+        .feedback-bubble { background: #fff; border: 1px solid #eee; padding: 25px; margin-top: 25px; position: relative; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .feedback-bubble::after { content: ''; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 10px solid #fff; }
+
+        footer { background: var(--bc-purple); color: white; padding: 50px 5% 20px; margin-top: 60px; }
+        .footer-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
+        .footer-cols h4 { border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; margin-bottom: 15px; font-size: 16px; }
+        .footer-cols p { font-size: 13px; margin: 8px 0; color: #ccc; cursor: pointer; }
+        .footer-bottom { text-align: center; font-size: 11px; color: #999; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+
+        @media (max-width: 600px) {
+            .portal-tabs { font-size: 11px; overflow-x: auto; }
+        }
+
+        /* --- Admin Styles --- */
+        .admin-panel { background: var(--bc-gray-bg); border: 1px solid var(--bc-border); border-radius: 6px; padding: 30px; margin-top: 10px; }
+        .admin-panel h2 { margin-top: 0; color: var(--bc-purple); display: flex; align-items: center; gap: 10px; }
+        .admin-section { background: #fff; border: 1px solid var(--bc-border); border-radius: 4px; padding: 25px; margin-bottom: 20px; }
+        .admin-section h3 { margin-top: 0; color: var(--bc-purple); border-bottom: 2px solid var(--bc-cyan); padding-bottom: 10px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+        .form-row .form-group { margin-bottom: 15px; }
+        .score-inputs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        @media (max-width: 500px) { .score-inputs { grid-template-columns: 1fr 1fr; } }
+        .score-inputs .form-group { margin-bottom: 10px; }
+        .score-inputs .form-group label { font-size: 12px; }
+        .score-inputs .form-group input { text-align: center; padding: 10px 5px; }
+
+        .user-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .user-table th, .user-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; font-size: 13px; }
+        .user-table th { background: var(--bc-purple); color: white; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .user-table tr:hover td { background: #f9fbfd; }
+        .user-table .actions { display: flex; gap: 6px; }
+
+        .alert { padding: 12px 18px; border-radius: 4px; margin-bottom: 15px; font-size: 14px; animation: fadeIn 0.3s; }
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        .login-toggle { display: flex; justify-content: center; gap: 0; margin-bottom: 25px; border-radius: 25px; overflow: hidden; border: 2px solid var(--btn-blue); }
+        .login-toggle-btn { padding: 10px 25px; cursor: pointer; font-size: 13px; font-weight: bold; border: none; background: #fff; color: var(--btn-blue); transition: all 0.2s; flex: 1; text-align: center; }
+        .login-toggle-btn.active { background: var(--btn-blue); color: #fff; }
+
+        .stat-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: #fff; border: 1px solid var(--bc-border); border-radius: 8px; padding: 20px; text-align: center; }
+        .stat-card .stat-num { font-size: 32px; font-weight: bold; color: var(--bc-purple); }
+        .stat-card .stat-label { font-size: 12px; color: #888; margin-top: 5px; }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: #fff; border-radius: 8px; padding: 30px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; position: relative; }
+        .modal h3 { margin-top: 0; color: var(--bc-purple); }
+        .modal-close { position: absolute; top: 12px; right: 15px; font-size: 22px; cursor: pointer; background: none; border: none; color: #999; }
+        .modal-close:hover { color: #333; }
+
+        .empty-state { text-align: center; padding: 40px 20px; color: #999; }
+        .empty-state .empty-icon { font-size: 48px; margin-bottom: 10px; }
+
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+        .badge-blue { background: #e3f2fd; color: #1565c0; }
+        .badge-green { background: #e8f5e9; color: #2e7d32; }
+        .badge-purple { background: #f3e5f5; color: #6a1b9a; }
+
+        .search-bar { display: flex; gap: 10px; margin-bottom: 20px; }
+        .search-bar input { flex: 1; padding: 10px 15px; border: 1px solid #ccc; border-radius: 20px; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="container">
+            <div class="utility-links" id="utility-links">
+                <a onclick="navigateTo('login')">🔑 Sign in</a>
+                <a>Contact us</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-header">
+        <div class="container">
+            <div class="logo-area" onclick="doLogout()">
+                <svg viewBox="0 0 44 44" width="36" height="36" fill="white">
+                    <circle cx="6" cy="6" r="3.5"/><circle cx="16" cy="6" r="3.5"/><circle cx="6" cy="16" r="3.5"/><circle cx="16" cy="16" r="3.5"/>
+                    <circle cx="28" cy="6" r="3.5"/><circle cx="38" cy="6" r="3.5"/><circle cx="28" cy="16" r="3.5"/><circle cx="38" cy="16" r="3.5"/>
+                    <circle cx="6" cy="28" r="3.5"/><circle cx="16" cy="28" r="3.5"/><circle cx="6" cy="38" r="3.5"/><circle cx="16" cy="38" r="3.5"/>
+                    <circle cx="28" cy="28" r="3.5"/><circle cx="38" cy="28" r="3.5"/><circle cx="28" cy="38" r="3.5"/><circle cx="38" cy="38" r="3.5"/>
+                </svg>
+                <div class="bc-text">BRITISH<br>COUNCIL</div>
+            </div>
+            <div class="header-divider"></div>
+            <div class="ielts-area">
+                <span class="ielts-text">IELTS</span><span class="reg-mark">®</span>
+            </div>
+            <div class="country-text">Kenya</div>
+        </div>
+    </div>
+
+    <div class="nav-bar">
+        <div class="container">
+            <div class="nav-inner" id="main-nav">
+                <a onclick="navigateTo('landing')" data-nav="landing" class="active">🏠 Home</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+
+        <!-- PAGE: LANDING -->
+        <div id="page-landing" class="page active">
+            <div class="hero">
+                <h1>Achieve your goals with IELTS</h1>
+                <p>The world's most popular English language test for higher education and global migration.</p>
+                <div style="margin-top: 30px;">
+                    <button class="btn btn-blue" onclick="navigateTo('login')">Book your test today</button>
+                    <button class="btn btn-outline" onclick="navigateTo('login')" style="margin-left:10px;">View results</button>
+                </div>
+            </div>
+            <div class="card-grid">
+                <div class="card">
+                    <h3>Academic</h3>
+                    <p>For those applying for higher education or professional registration.</p>
+                </div>
+                <div class="card">
+                    <h3>General Training</h3>
+                    <p>For those migrating to Australia, Canada and the UK, or applying for training.</p>
+                </div>
+                <div class="card">
+                    <h3>Free Prep</h3>
+                    <p>Access our wide range of free IELTS preparation materials.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE: LOGIN -->
+        <div id="page-login" class="page">
+            <div class="login-card">
+                <div class="lock-icon">🔒</div>
+                <h2>Log in</h2>
+                <div class="login-toggle">
+                    <div class="login-toggle-btn active" onclick="setLoginMode('taker')">👤 Test Taker</div>
+                    <div class="login-toggle-btn" onclick="setLoginMode('admin')">🛡️ Admin</div>
+                </div>
+                <div id="login-error" class="alert alert-error" style="display:none;"></div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="login-email" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label>Password:</label>
+                    <input type="password" id="login-password" placeholder="Enter your password">
+                </div>
+                <button class="btn btn-blue" style="width: 100%;" onclick="doLogin()">Log in</button>
+                <p id="admin-hint" style="text-align: center; font-size: 12px; margin-top: 15px; color: #999; display: none;">
+                    Default admin: admin@ielts.com / admin123
+                </p>
+            </div>
+        </div>
+
+        <!-- PAGE: ADMIN DASHBOARD -->
+        <div id="page-admin" class="page">
+            <div class="admin-panel">
+                <h2>🛡️ Admin Dashboard</h2>
+                
+                <div class="stat-cards" id="admin-stats"></div>
+
+                <!-- Create Test Taker -->
+                <div class="admin-section">
+                    <h3>➕ Create New Test Taker Account</h3>
+                    <div id="create-alert"></div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Full Name:</label>
+                            <input type="text" id="new-name" placeholder="e.g. SYED WASAY ALI">
+                        </div>
+                        <div class="form-group">
+                            <label>Email (login):</label>
+                            <input type="email" id="new-email" placeholder="e.g. syed@example.com">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Password:</label>
+                            <input type="text" id="new-password" placeholder="Set a password">
+                        </div>
+                        <div class="form-group">
+                            <label>Date of Birth:</label>
+                            <input type="text" id="new-dob" placeholder="e.g. 12 Oct 1995">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>ID Document:</label>
+                            <input type="text" id="new-id-doc" placeholder="e.g. Passport (PK992831)">
+                        </div>
+                        <div class="form-group">
+                            <label>First Language:</label>
+                            <input type="text" id="new-language" placeholder="e.g. Urdu">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Test Type:</label>
+                            <select id="new-test-type">
+                                <option value="IELTS Academic">IELTS Academic</option>
+                                <option value="IELTS General Training">IELTS General Training</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Test Date:</label>
+                            <input type="text" id="new-test-date" placeholder="e.g. Saturday February 5 2022">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Reference Number:</label>
+                            <input type="text" id="new-reference" placeholder="e.g. A3-PK015-S-7101306">
+                        </div>
+                        <div class="form-group">
+                            <label>TRF Number:</label>
+                            <input type="text" id="new-trf" placeholder="e.g. 21PK001029ALIW710A">
+                        </div>
+                    </div>
+
+                    <h4 style="color: var(--bc-purple); margin-bottom: 10px;">📊 Band Scores</h4>
+                    <div class="score-inputs">
+                        <div class="form-group">
+                            <label>🎧 Listening</label>
+                            <input type="number" step="0.5" min="0" max="9" id="new-listening" placeholder="0-9">
+                        </div>
+                        <div class="form-group">
+                            <label>📖 Reading</label>
+                            <input type="number" step="0.5" min="0" max="9" id="new-reading" placeholder="0-9">
+                        </div>
+                        <div class="form-group">
+                            <label>✍️ Writing</label>
+                            <input type="number" step="0.5" min="0" max="9" id="new-writing" placeholder="0-9">
+                        </div>
+                        <div class="form-group">
+                            <label>💬 Speaking</label>
+                            <input type="number" step="0.5" min="0" max="9" id="new-speaking" placeholder="0-9">
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <button class="btn btn-blue" onclick="createTestTaker()">✅ Create Account & Save Results</button>
+                    </div>
+                </div>
+
+                <!-- Manage Test Takers -->
+                <div class="admin-section">
+                    <h3>📋 Manage Test Takers</h3>
+                    <div class="search-bar">
+                        <input type="text" id="search-users" placeholder="🔍 Search by name or email..." oninput="renderUserTable()">
+                    </div>
+                    <div id="user-table-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PORTAL CONTENT (Test Taker Dashboard) -->
+        <div id="portal-wrapper" style="display: none;">
+            <div style="margin-bottom: 20px;" id="portal-header-info"></div>
+
+            <div class="status-header">This test has been completed.</div>
+
+            <div class="portal-tabs">
+                <div class="tab" onclick="navigateTo('dashboard')">Date & location</div>
+                <div class="tab" id="tab-taker" onclick="navigateTo('test-taker')">Test taker</div>
+                <div class="tab" id="tab-results" onclick="navigateTo('results')">Results</div>
+                <div class="tab">Payments</div>
+                <div class="tab">Help & Contact</div>
+            </div>
+
+            <div id="page-dashboard" class="page" style="border: 1px solid #ddd; border-top: none; padding: 30px;">
+                <h3 style="margin-top: 0;">Test Information</h3>
+                <p style="color: #666;">Select a tab above to view your test taker details or results.</p>
+            </div>
+
+            <div id="page-test-taker" class="page" style="border: 1px solid #ddd; border-top: none; padding: 30px;">
+                <h3 style="margin-top: 0;">Personal Information</h3>
+                <table id="taker-info-table" style="width: 100%; border-collapse: collapse;"></table>
+            </div>
+
+            <div id="page-results" class="page">
+                <div class="results-table" id="results-display"></div>
+                <div class="feedback-bubble" id="feedback-display"></div>
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-blue" style="border-radius: 5px;" onclick="toggleExplanation()">+ Show score explanation</button>
+                </div>
+                <div id="score-explanation" style="display:none; margin-top: 20px; padding: 20px; background: #f9f9f9; border: 1px solid #eee; border-radius: 4px;">
+                    <h4 style="margin-top: 0; color: var(--bc-purple);">Score Explanation</h4>
+                    <p style="font-size: 13px; color: #555;" id="explanation-text"></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="edit-modal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeEditModal()">&times;</button>
+            <h3>✏️ Edit Test Taker</h3>
+            <div id="edit-alert"></div>
+            <input type="hidden" id="edit-index">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Full Name:</label>
+                    <input type="text" id="edit-name">
+                </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="edit-email">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Password:</label>
+                    <input type="text" id="edit-password">
+                </div>
+                <div class="form-group">
+                    <label>Date of Birth:</label>
+                    <input type="text" id="edit-dob">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>ID Document:</label>
+                    <input type="text" id="edit-id-doc">
+                </div>
+                <div class="form-group">
+                    <label>First Language:</label>
+                    <input type="text" id="edit-language">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Test Type:</label>
+                    <select id="edit-test-type">
+                        <option value="IELTS Academic">IELTS Academic</option>
+                        <option value="IELTS General Training">IELTS General Training</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Test Date:</label>
+                    <input type="text" id="edit-test-date">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Reference:</label>
+                    <input type="text" id="edit-reference">
+                </div>
+                <div class="form-group">
+                    <label>TRF Number:</label>
+                    <input type="text" id="edit-trf">
+                </div>
+            </div>
+            <h4 style="margin-bottom: 10px;">📊 Band Scores</h4>
+            <div class="score-inputs">
+                <div class="form-group">
+                    <label>🎧 Listening</label>
+                    <input type="number" step="0.5" min="0" max="9" id="edit-listening">
+                </div>
+                <div class="form-group">
+                    <label>📖 Reading</label>
+                    <input type="number" step="0.5" min="0" max="9" id="edit-reading">
+                </div>
+                <div class="form-group">
+                    <label>✍️ Writing</label>
+                    <input type="number" step="0.5" min="0" max="9" id="edit-writing">
+                </div>
+                <div class="form-group">
+                    <label>💬 Speaking</label>
+                    <input type="number" step="0.5" min="0" max="9" id="edit-speaking">
+                </div>
+            </div>
+            <div style="margin-top: 20px; display: flex; gap: 10px;">
+                <button class="btn btn-blue" onclick="saveEdit()">💾 Save Changes</button>
+                <button class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-cols">
+            <div>
+                <h4>About us</h4>
+                <p>Equality policy</p>
+                <p>Contact us</p>
+                <p>Press office</p>
+            </div>
+            <div>
+                <h4>Partner</h4>
+                <p>Why partner with us?</p>
+                <p>Institutional recognition</p>
+                <p>Become an agent</p>
+            </div>
+            <div>
+                <h4>Teach</h4>
+                <p>Teacher resources</p>
+                <p>IELTS examiner training</p>
+            </div>
+            <div>
+                <h4>Connect</h4>
+                <p>Facebook</p>
+                <p>Twitter / X</p>
+                <p>Instagram</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2024 British Council. The United Kingdom's international organisation for cultural relations and educational opportunities. A registered charity: 209131 (England and Wales) SC037733 (Scotland).
+        </div>
+    </footer>
+
+    <script>
+        // ===== DATA STORE =====
+        const ADMIN = { email: 'admin@ielts.com', password: 'admin123' };
+        let testTakers = [];
+        let currentUser = null; // null, 'admin', or index into testTakers
+        let loginMode = 'taker'; // 'taker' or 'admin'
+
+        // Band descriptors
+        const bandDescriptors = {
+            9: { title: 'Expert User', desc: 'The test taker has fully operational command of the language. Their use of English is appropriate, accurate and fluent, and shows complete understanding.' },
+            8.5: { title: 'Very Good User', desc: 'The test taker has fully operational command of the language with only occasional unsystematic inaccuracies and inappropriate usage. They may misunderstand some things in unfamiliar situations. They handle complex and detailed argumentation well.' },
+            8: { title: 'Very Good User', desc: 'The test taker has fully operational command of the language with only occasional unsystematic inaccuracies and inappropriate usage. They may misunderstand some things in unfamiliar situations. They handle complex and detailed argumentation well.' },
+            7.5: { title: 'Good User', desc: 'The test taker has operational command of the language, though with occasional inaccuracies, inappropriate usage and misunderstandings in some situations. They generally handle complex language well and understand detailed reasoning.' },
+            7: { title: 'Good User', desc: 'The test taker has operational command of the language, though with occasional inaccuracies, inappropriate usage and misunderstandings in some situations. They generally handle complex language well and understand detailed reasoning.' },
+            6.5: { title: 'Competent User', desc: 'The test taker has an effective command of the language despite some inaccuracies, inappropriate usage and misunderstandings. They can use and understand fairly complex language, particularly in familiar situations.' },
+            6: { title: 'Competent User', desc: 'The test taker has an effective command of the language despite some inaccuracies, inappropriate usage and misunderstandings. They can use and understand fairly complex language, particularly in familiar situations.' },
+            5.5: { title: 'Modest User', desc: 'The test taker has a partial command of the language, and copes with overall meaning in most situations, although they are likely to make many mistakes. They should be able to handle basic communication in their own field.' },
+            5: { title: 'Modest User', desc: 'The test taker has a partial command of the language, and copes with overall meaning in most situations, although they are likely to make many mistakes. They should be able to handle basic communication in their own field.' },
+            4.5: { title: 'Limited User', desc: 'The test taker\'s basic competence is limited to familiar situations. They frequently show problems in understanding and expression. They are not able to use complex language.' },
+            4: { title: 'Limited User', desc: 'The test taker\'s basic competence is limited to familiar situations. They frequently show problems in understanding and expression. They are not able to use complex language.' }
+        };
+
+        function getBandDescriptor(score) {
+            const s = parseFloat(score);
+            if (s >= 8.5) return bandDescriptors[9];
+            if (s >= 7.5) return bandDescriptors[7.5];
+            if (s >= 6.5) return bandDescriptors[6.5];
+            if (s >= 5.5) return bandDescriptors[5.5];
+            if (s >= 4.5) return bandDescriptors[4.5];
+            return { title: 'Limited User', desc: 'The test taker has great difficulty understanding spoken and written English.' };
+        }
+
+        function calcOverall(l, r, w, s) {
+            const avg = (parseFloat(l) + parseFloat(r) + parseFloat(w) + parseFloat(s)) / 4;
+            return (Math.round(avg * 2) / 2).toFixed(1);
+        }
+
+        // ===== NAVIGATION =====
+        function updateNav() {
+            const nav = document.getElementById('main-nav');
+            const utils = document.getElementById('utility-links');
+
+            if (currentUser === 'admin') {
+                nav.innerHTML = `
+                    <a onclick="navigateTo('landing')" data-nav="landing">🏠 Home</a>
+                    <a onclick="navigateTo('admin')" data-nav="admin" class="active">🛡️ Admin Panel</a>
+                `;
+                utils.innerHTML = `
+                    <a style="font-weight:bold; color:var(--bc-purple);">🛡️ Administrator</a>
+                    <a onclick="doLogout()" style="cursor:pointer;">Sign out</a>
+                `;
+            } else if (currentUser !== null && currentUser !== 'admin') {
+                const user = testTakers[currentUser];
+                nav.innerHTML = `
+                    <a onclick="navigateTo('landing')" data-nav="landing">🏠 Home</a>
+                    <a onclick="navigateTo('results')" data-nav="results">Test Results</a>
+                    <a onclick="navigateTo('test-taker')" data-nav="test-taker">Test Taker</a>
+                `;
+                utils.innerHTML = `
+                    <a style="font-weight:bold; color:var(--bc-purple);">👤 ${user.name}</a>
+                    <a onclick="doLogout()" style="cursor:pointer;">Sign out</a>
+                `;
+            } else {
+                nav.innerHTML = `
+                    <a onclick="navigateTo('landing')" data-nav="landing" class="active">🏠 Home</a>
+                `;
+                utils.innerHTML = `
+                    <a onclick="navigateTo('login')">🔑 Sign in</a>
+                    <a>Contact us</a>
+                `;
+            }
+        }
+
+        function navigateTo(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const portalWrapper = document.getElementById('portal-wrapper');
+
+            document.querySelectorAll('#main-nav a').forEach(a => a.classList.remove('active'));
+
+            if (pageId === 'landing') {
+                document.getElementById('page-landing').classList.add('active');
+                portalWrapper.style.display = 'none';
+                document.querySelector('#main-nav a[data-nav="landing"]')?.classList.add('active');
+            } else if (pageId === 'login') {
+                document.getElementById('page-login').classList.add('active');
+                portalWrapper.style.display = 'none';
+                document.getElementById('login-error').style.display = 'none';
+            } else if (pageId === 'admin') {
+                document.getElementById('page-admin').classList.add('active');
+                portalWrapper.style.display = 'none';
+                document.querySelector('#main-nav a[data-nav="admin"]')?.classList.add('active');
+                renderAdminDashboard();
+            } else if (currentUser !== null && currentUser !== 'admin') {
+                portalWrapper.style.display = 'block';
+                const user = testTakers[currentUser];
+                renderPortalHeader(user);
+
+                const target = document.getElementById('page-' + pageId);
+                if (target) target.classList.add('active');
+
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                if (pageId === 'results') {
+                    document.getElementById('tab-results').classList.add('active');
+                    document.querySelector('#main-nav a[data-nav="results"]')?.classList.add('active');
+                    renderResults(user);
+                }
+                if (pageId === 'test-taker') {
+                    document.getElementById('tab-taker').classList.add('active');
+                    document.querySelector('#main-nav a[data-nav="test-taker"]')?.classList.add('active');
+                    renderTakerInfo(user);
+                }
+                if (pageId === 'dashboard') {
+                    document.getElementById('page-dashboard').classList.add('active');
+                }
+            }
+            window.scrollTo(0, 0);
+        }
+
+        // ===== LOGIN =====
+        function setLoginMode(mode) {
+            loginMode = mode;
+            document.querySelectorAll('.login-toggle-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('admin-hint').style.display = mode === 'admin' ? 'block' : 'none';
+            document.getElementById('login-error').style.display = 'none';
+            document.getElementById('login-email').value = '';
+            document.getElementById('login-password').value = '';
+            if (mode === 'admin') {
+                document.getElementById('login-email').placeholder = 'Admin email';
+                document.getElementById('login-password').placeholder = 'Admin password';
+            } else {
+                document.getElementById('login-email').placeholder = 'Enter your email';
+                document.getElementById('login-password').placeholder = 'Enter your password';
+            }
+        }
+
+        function doLogin() {
+            const email = document.getElementById('login-email').value.trim().toLowerCase();
+            const password = document.getElementById('login-password').value;
+            const errEl = document.getElementById('login-error');
+
+            if (!email || !password) {
+                errEl.textContent = 'Please enter both email and password.';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            if (loginMode === 'admin') {
+                if (email === ADMIN.email && password === ADMIN.password) {
+                    currentUser = 'admin';
+                    updateNav();
+                    navigateTo('admin');
+                } else {
+                    errEl.textContent = 'Invalid admin credentials.';
+                    errEl.style.display = 'block';
+                }
+            } else {
+                const idx = testTakers.findIndex(t => t.email.toLowerCase() === email && t.password === password);
+                if (idx !== -1) {
+                    currentUser = idx;
+                    updateNav();
+                    navigateTo('results');
+                } else {
+                    errEl.textContent = 'Invalid email or password. Please contact your administrator.';
+                    errEl.style.display = 'block';
+                }
+            }
+        }
+
+        function doLogout() {
+            currentUser = null;
+            updateNav();
+            navigateTo('landing');
+        }
+
+        // ===== RENDER: Test Taker Portal =====
+        function renderPortalHeader(user) {
+            document.getElementById('portal-header-info').innerHTML = `
+                <h2 style="margin:0;">${user.testType}</h2>
+                <div style="color:#666; font-size:18px;">${user.name}, ${user.testDate}</div>
+                <div style="font-size:12px; color:#999;">Reference: ${user.reference}</div>
+            `;
+        }
+
+        function renderTakerInfo(user) {
+            document.getElementById('taker-info-table').innerHTML = `
+                <tr style="border-bottom:1px solid #eee;"><td style="padding:12px 0;color:#666;width:40%;">Full Name</td><td style="padding:12px 0;font-weight:bold;">${user.name}</td></tr>
+                <tr style="border-bottom:1px solid #eee;"><td style="padding:12px 0;color:#666;">Date of Birth</td><td style="padding:12px 0;font-weight:bold;">${user.dob}</td></tr>
+                <tr style="border-bottom:1px solid #eee;"><td style="padding:12px 0;color:#666;">ID Document</td><td style="padding:12px 0;font-weight:bold;">${user.idDoc}</td></tr>
+                <tr><td style="padding:12px 0;color:#666;">First Language</td><td style="padding:12px 0;font-weight:bold;">${user.language}</td></tr>
+            `;
+        }
+
+        function renderResults(user) {
+            const overall = calcOverall(user.listening, user.reading, user.writing, user.speaking);
+            const desc = getBandDescriptor(overall);
+            document.getElementById('results-display').innerHTML = `
+                <div style="padding:15px 20px;font-size:13px;color:#666;border-bottom:1px solid #eee;">
+                    Test Report Form (TRF) Number: <span style="background:#eee;border-radius:3px;padding:2px 5px;">${user.trf}</span>
+                </div>
+                <div class="row"><div class="row-label">🎧 Listening</div><div class="row-score">${parseFloat(user.listening).toFixed(1)}</div></div>
+                <div class="row"><div class="row-label">📖 Reading</div><div class="row-score">${parseFloat(user.reading).toFixed(1)}</div></div>
+                <div class="row"><div class="row-label">✍️ Writing</div><div class="row-score">${parseFloat(user.writing).toFixed(1)}</div></div>
+                <div class="row"><div class="row-label">💬 Speaking</div><div class="row-score">${parseFloat(user.speaking).toFixed(1)}</div></div>
+                <div class="row row-overall"><div class="row-label">Overall</div><div class="row-score" style="font-size:24px;color:var(--bc-purple);">${overall}</div></div>
+            `;
+            document.getElementById('feedback-display').innerHTML = `
+                <div style="font-weight:bold;margin-bottom:10px;">${desc.title}</div>
+                <p style="margin:0;font-size:14px;color:#555;">${desc.desc}</p>
+            `;
+            const expText = `Your overall band score of ${overall} is calculated as the average of your four component scores (Listening: ${parseFloat(user.listening).toFixed(1)}, Reading: ${parseFloat(user.reading).toFixed(1)}, Writing: ${parseFloat(user.writing).toFixed(1)}, Speaking: ${parseFloat(user.speaking).toFixed(1)}), rounded to the nearest whole or half band. This places you in the "${desc.title}" category.`;
+            document.getElementById('explanation-text').textContent = expText;
+            document.getElementById('score-explanation').style.display = 'none';
+        }
+
+        function toggleExplanation() {
+            const el = document.getElementById('score-explanation');
+            el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // ===== ADMIN: Render =====
+        function renderAdminDashboard() {
+            renderAdminStats();
+            renderUserTable();
+        }
+
+        function renderAdminStats() {
+            const total = testTakers.length;
+            let avgOverall = 0;
+            if (total > 0) {
+                const sum = testTakers.reduce((acc, t) => acc + parseFloat(calcOverall(t.listening, t.reading, t.writing, t.speaking)), 0);
+                avgOverall = (sum / total).toFixed(1);
+            }
+            document.getElementById('admin-stats').innerHTML = `
+                <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">Total Test Takers</div></div>
+                <div class="stat-card"><div class="stat-num">${avgOverall || '—'}</div><div class="stat-label">Avg Overall Band</div></div>
+                <div class="stat-card"><div class="stat-num">🟢</div><div class="stat-label">System Active</div></div>
+            `;
+        }
+
+        function renderUserTable() {
+            const container = document.getElementById('user-table-container');
+            const search = (document.getElementById('search-users')?.value || '').toLowerCase();
+            const filtered = testTakers.map((t, i) => ({...t, _idx: i})).filter(t =>
+                t.name.toLowerCase().includes(search) || t.email.toLowerCase().includes(search)
+            );
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <p>${testTakers.length === 0 ? 'No test takers yet. Create one above!' : 'No results match your search.'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `<table class="user-table">
+                <thead><tr>
+                    <th>#</th><th>Name</th><th>Email</th><th>Overall</th><th>Test Type</th><th>Actions</th>
+                </tr></thead><tbody>`;
+            filtered.forEach((t, i) => {
+                const ov = calcOverall(t.listening, t.reading, t.writing, t.speaking);
+                const badgeClass = parseFloat(ov) >= 7 ? 'badge-green' : parseFloat(ov) >= 5.5 ? 'badge-blue' : 'badge-purple';
+                html += `<tr>
+                    <td>${t._idx + 1}</td>
+                    <td style="font-weight:bold;">${t.name}</td>
+                    <td style="color:#666;">${t.email}</td>
+                    <td><span class="badge ${badgeClass}">${ov}</span></td>
+                    <td style="font-size:12px;">${t.testType}</td>
+                    <td class="actions">
+                        <button class="btn btn-blue btn-small" onclick="openEditModal(${t._idx})">✏️ Edit</button>
+                        <button class="btn btn-red btn-small" onclick="deleteUser(${t._idx})">🗑️</button>
+                    </td>
+                </tr>`;
+            });
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // ===== ADMIN: Create =====
+        function createTestTaker() {
+            const alertEl = document.getElementById('create-alert');
+            const name = document.getElementById('new-name').value.trim();
+            const email = document.getElementById('new-email').value.trim();
+            const password = document.getElementById('new-password').value.trim();
+            const dob = document.getElementById('new-dob').value.trim();
+            const idDoc = document.getElementById('new-id-doc').value.trim();
+            const language = document.getElementById('new-language').value.trim();
+            const testType = document.getElementById('new-test-type').value;
+            const testDate = document.getElementById('new-test-date').value.trim();
+            const reference = document.getElementById('new-reference').value.trim();
+            const trf = document.getElementById('new-trf').value.trim();
+            const listening = document.getElementById('new-listening').value;
+            const reading = document.getElementById('new-reading').value;
+            const writing = document.getElementById('new-writing').value;
+            const speaking = document.getElementById('new-speaking').value;
+
+            if (!name || !email || !password) {
+                alertEl.innerHTML = '<div class="alert alert-error">Name, email and password are required.</div>';
+                return;
+            }
+            if (testTakers.some(t => t.email.toLowerCase() === email.toLowerCase())) {
+                alertEl.innerHTML = '<div class="alert alert-error">An account with this email already exists.</div>';
+                return;
+            }
+            if (!listening || !reading || !writing || !speaking) {
+                alertEl.innerHTML = '<div class="alert alert-error">Please enter all four band scores.</div>';
+                return;
+            }
+
+            testTakers.push({
+                name: name.toUpperCase(),
+                email,
+                password,
+                dob: dob || 'N/A',
+                idDoc: idDoc || 'N/A',
+                language: language || 'N/A',
+                testType,
+                testDate: testDate || 'N/A',
+                reference: reference || 'N/A',
+                trf: trf || 'N/A',
+                listening: parseFloat(listening),
+                reading: parseFloat(reading),
+                writing: parseFloat(writing),
+                speaking: parseFloat(speaking)
+            });
+
+            alertEl.innerHTML = `<div class="alert alert-success">✅ Account created for <strong>${name.toUpperCase()}</strong> (${email})</div>`;
+
+            // Clear form
+            ['new-name','new-email','new-password','new-dob','new-id-doc','new-language','new-test-date','new-reference','new-trf','new-listening','new-reading','new-writing','new-speaking'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+
+            renderAdminDashboard();
+            setTimeout(() => { alertEl.innerHTML = ''; }, 4000);
+        }
+
+        // ===== ADMIN: Edit =====
+        function openEditModal(idx) {
+            const t = testTakers[idx];
+            document.getElementById('edit-index').value = idx;
+            document.getElementById('edit-name').value = t.name;
+            document.getElementById('edit-email').value = t.email;
+            document.getElementById('edit-password').value = t.password;
+            document.getElementById('edit-dob').value = t.dob;
+            document.getElementById('edit-id-doc').value = t.idDoc;
+            document.getElementById('edit-language').value = t.language;
+            document.getElementById('edit-test-type').value = t.testType;
+            document.getElementById('edit-test-date').value = t.testDate;
+            document.getElementById('edit-reference').value = t.reference;
+            document.getElementById('edit-trf').value = t.trf;
+            document.getElementById('edit-listening').value = t.listening;
+            document.getElementById('edit-reading').value = t.reading;
+            document.getElementById('edit-writing').value = t.writing;
+            document.getElementById('edit-speaking').value = t.speaking;
+            document.getElementById('edit-alert').innerHTML = '';
+            document.getElementById('edit-modal').classList.add('active');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.remove('active');
+        }
+
+        function saveEdit() {
+            const idx = parseInt(document.getElementById('edit-index').value);
+            const alertEl = document.getElementById('edit-alert');
+            const name = document.getElementById('edit-name').value.trim();
+            const email = document.getElementById('edit-email').value.trim();
+            const password = document.getElementById('edit-password').value.trim();
+
+            if (!name || !email || !password) {
+                alertEl.innerHTML = '<div class="alert alert-error">Name, email and password are required.</div>';
+                return;
+            }
+            const dup = testTakers.findIndex((t, i) => i !== idx && t.email.toLowerCase() === email.toLowerCase());
+            if (dup !== -1) {
+                alertEl.innerHTML = '<div class="alert alert-error">Another account with this email already exists.</div>';
+                return;
+            }
+
+            testTakers[idx] = {
+                name: name.toUpperCase(),
+                email,
+                password,
+                dob: document.getElementById('edit-dob').value.trim() || 'N/A',
+                idDoc: document.getElementById('edit-id-doc').value.trim() || 'N/A',
+                language: document.getElementById('edit-language').value.trim() || 'N/A',
+                testType: document.getElementById('edit-test-type').value,
+                testDate: document.getElementById('edit-test-date').value.trim() || 'N/A',
+                reference: document.getElementById('edit-reference').value.trim() || 'N/A',
+                trf: document.getElementById('edit-trf').value.trim() || 'N/A',
+                listening: parseFloat(document.getElementById('edit-listening').value) || 0,
+                reading: parseFloat(document.getElementById('edit-reading').value) || 0,
+                writing: parseFloat(document.getElementById('edit-writing').value) || 0,
+                speaking: parseFloat(document.getElementById('edit-speaking').value) || 0,
+            };
+
+            closeEditModal();
+            renderAdminDashboard();
+        }
+
+        // ===== ADMIN: Delete =====
+        function deleteUser(idx) {
+            if (confirm(`Delete ${testTakers[idx].name}? This cannot be undone.`)) {
+                testTakers.splice(idx, 1);
+                // If deleted user was logged in somewhere, reset
+                if (currentUser === idx) { currentUser = null; updateNav(); }
+                else if (typeof currentUser === 'number' && currentUser > idx) { currentUser--; }
+                renderAdminDashboard();
+            }
+        }
+
+        // ===== SEED SAMPLE DATA =====
+        testTakers.push({
+            name: 'SYED WASAY ALI',
+            email: 'syed.wasay@example.com',
+            password: 'password123',
+            dob: '12 Oct 1995',
+            idDoc: 'Passport (PK992831)',
+            language: 'Urdu',
+            testType: 'IELTS Academic',
+            testDate: 'Saturday February 5 2022',
+            reference: 'A3-PK015-S-7101306',
+            trf: '21PK001029ALIW710A',
+            listening: 8.0,
+            reading: 7.0,
+            writing: 6.5,
+            speaking: 6.0
+        });
+
+        testTakers.push({
+            name: 'JANE MUTHONI',
+            email: 'jane.m@example.com',
+            password: 'jane2024',
+            dob: '23 Mar 1998',
+            idDoc: 'National ID (KE38291045)',
+            language: 'Swahili',
+            testType: 'IELTS Academic',
+            testDate: 'Saturday March 12 2024',
+            reference: 'A3-KE022-S-8203417',
+            trf: '24KE002015MUTJ820A',
+            listening: 7.5,
+            reading: 8.0,
+            writing: 7.0,
+            speaking: 7.5
+        });
+
+        // Initialize
+        navigateTo('landing');
+    </script>
+</body>
+</html>
